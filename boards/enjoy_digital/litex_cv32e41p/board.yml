@@ -1,0 +1,5 @@
+board:
+  name: litex_cv32e41p
+  vendor: litex
+  socs:
+  - name: litex_cv32e41p

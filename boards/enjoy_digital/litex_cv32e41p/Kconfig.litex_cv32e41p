@@ -1,0 +1,7 @@
+# Copyright (c) 2018 - 2019 Antmicro <www.antmicro.com>
+# SPDX-License-Identifier: Apache-2.0
+# select SERIAL_SUPPORT_INTERRUPT
+# select SERIAL
+
+config BOARD_LITEX_CV32E41P
+	select SOC_LITEX_CV32E41P
