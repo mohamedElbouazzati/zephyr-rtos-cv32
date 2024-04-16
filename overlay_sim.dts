@@ -1,0 +1,67 @@
+&uart0 {
+    reg = <0x82002000 0x4
+        0x82002004 0x4
+        0x82002008 0x4
+        0x8200200c 0x4
+        0x82002010 0x4
+        0x82002014 0x4
+        0x82002018 0x4
+        0x8200201c 0x4>;
+    reg-names = "rxtx",
+        "txfull",
+        "rxempty",
+        "ev_status",
+        "ev_pending",
+        "ev_enable",
+        "txempty",
+        "rxfull";
+    interrupts = <0x0 0>;
+};
+&timer0 {
+    reg = <0x82001800 0x4
+        0x82001804 0x4
+        0x82001808 0x4
+        0x8200180c 0x4
+        0x82001810 0x4
+        0x82001814 0x4
+        0x82001818 0x4
+        0x8200181c 0x4
+        0x82001820 0x4
+        0x82001824 0x8>;
+    reg-names = "load",
+        "reload",
+        "en",
+        "update_value",
+        "value",
+        "ev_status",
+        "ev_pending",
+        "ev_enable",
+        "uptime_latch",
+        "uptime_cycles";
+    interrupts = <0x1 0>;
+};
+&eth0 {
+    status = "disabled";
+};
+&spi0 {
+    status = "disabled";
+};
+
+&i2c0 {
+    status = "disabled";
+};
+&i2s_rx {
+    status = "disabled";
+};
+&i2s_tx {
+    status = "disabled";
+};
+&clock0 {
+    status = "disabled";
+};
+&ram0 {
+    reg = <0x40000000 0x4000000>;
+};
+&dna0 {
+    status = "disabled";
+};
