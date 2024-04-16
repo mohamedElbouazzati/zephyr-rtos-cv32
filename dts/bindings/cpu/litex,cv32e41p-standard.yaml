@@ -1,0 +1,9 @@
+# Copyright (c) 2024 Antmicro <www.antmicro.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+description: cv32e41p core with the standard configuration as used by LiteX
+
+compatible: "litex,cv32e41p-standard"
+
+include: riscv,cpus.yaml
