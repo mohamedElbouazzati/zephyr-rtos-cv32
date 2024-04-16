@@ -30,6 +30,13 @@ config VEXRISCV_LITEX_IRQ
 	help
 	  IRQ implementation for LiteX VexRiscv
 
+config CV32E41P_LITEX_IRQ
+	bool "cv32e41p LiteX Interrupt controller"
+	default y
+	depends on DT_HAS_CV32E41P_INTC0_ENABLED
+	help
+	  IRQ implementation for LiteX cv32e41p
+
 config LEON_IRQMP
 	bool "GRLIB IRQMP interrupt controller"
 	default y
