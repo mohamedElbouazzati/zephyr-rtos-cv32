@@ -5,3 +5,4 @@
 
 config BOARD_LITEX_CV32E41P
 	select SOC_LITEX_CV32E41P
+
