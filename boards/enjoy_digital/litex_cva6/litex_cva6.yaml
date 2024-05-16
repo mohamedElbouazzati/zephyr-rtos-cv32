@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2018 - 2019 Antmicro <www.antmicro.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+identifier: litex_cva6
+name: LiteX SoC with cva6 softcore CPU
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+ram: 262144
+supported:
+  - spi
+  - i2s
+testing:
+  ignore_tags:
+    - bluetooth
+    - xip
+vendor: litex
