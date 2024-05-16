@@ -1,0 +1,10 @@
+# Copyright (c) 2018 - 2019 Antmicro <www.antmicro.com>
+# SPDX-License-Identifier: Apache-2.0
+
+config SOC_LITEX_CVA6
+	bool
+	help
+	  LiteX CVA6 system implementation
+
+config SOC
+	default "litex_cva6" if SOC_LITEX_CVA6
