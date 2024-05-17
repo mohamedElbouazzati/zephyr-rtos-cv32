@@ -19,12 +19,18 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		cpu@0 {
-			clock-frequency = <100000000>;
+			clock-frequency = <25000000>;
 			compatible = "litex,cva6-standard", "riscv";
 			device_type = "cpu";
 			reg = <0>;
-			riscv,isa = "rv32ima_zicsr_zifencei";
+			riscv,isa = "rv64imafdc";
 			status = "okay";
+		    // HLIC - hart local interrupt controller
+			CPU0_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+      };
 		};
 	};
 	soc {
@@ -32,27 +38,34 @@
 		#size-cells = <1>;
 		compatible = "litex,cva6";
 		ranges;
-		intc0: interrupt-controller@bc0 {
-			compatible = "cva6-intc0";
+		clint0: clint@2000000 {
+			compatible = "riscv,clint0";
+			interrupts-extended = <&CPU0_intc 3 &CPU0_intc 7>;
+			reg = <0x2000000 0xc0000>;
+			reg-names = "control";
+			};
+		PLIC0: interrupt-controller@c000000 {
 			#address-cells = <0>;
 			#interrupt-cells = <2>;
+			compatible = "sifive,plic-1.0.0", "riscv,plic0";
 			interrupt-controller;
-			reg = <0xbc0 0x4 0xfc0 0x4>;
-			reg-names = "irq_mask", "irq_pending";
+			interrupts-extended = <&CPU0_intc 11 &CPU0_intc 9>;
+			reg = <0xc000000 0x4000000>;
 			riscv,max-priority = <7>;
-		};
-		uart0: serial@e0001800 {
+			riscv,ndev = <30>;
+			};
+		uart0: serial@80003000 {
 			compatible = "litex,uart0";
-			interrupt-parent = <&intc0>;
-			interrupts = <2 10>;
-			reg = <0xe0001800 0x4
-				0xe0001804 0x4
-				0xe0001808 0x4
-				0xe000180c 0x4
-				0xe0001810 0x4
-				0xe0001814 0x4
-				0xe0001818 0x4
-				0xe000181c 0x4>;
+			interrupt-parent = <&PLIC0>;
+			interrupts = <0 10>;
+			reg = <0x80003000 0x4
+				0x80003004 0x4
+				0x80003008 0x4
+				0x8000300c 0x4
+				0x80003010 0x4
+				0x80003014 0x4
+				0x80003018 0x4
+				0x8000301c 0x4>;
 			reg-names =
 				"rxtx",
 				"txfull",
@@ -64,38 +77,20 @@
 				"rxfull";
 			status = "disabled";
 		};
-		spi0: spi@e0002000 {
-			compatible = "litex,spi";
-			reg = <0xe0002000 0x4
-				0xe0002004 0x4
-				0xe0002008 0x4
-				0xe000200c 0x4
-				0xe0002010 0x4
-				0xe0002014 0x4>;
-			reg-names = "control",
-				"status",
-				"mosi",
-				"miso",
-				"cs",
-				"loopback";
-			status = "disabled";
-			#address-cells = <1>;
-			#size-cells = <0>;
-		};
-		timer0: timer@e0002800 {
+		timer0: timer@80002800 {
 			compatible = "litex,timer0";
-			interrupt-parent = <&intc0>;
+			interrupt-parent = <&PLIC0>;
 			interrupts = <1 0>;
-			reg = <0xe0002800 0x4
-				0xe0002804 0x4
-				0xe0002808 0x4
-				0xe000280c 0x4
-				0xe0002810 0x4
-				0xe0002814 0x4
-				0xe0002818 0x4
-				0xe000281c 0x4
-				0xe0002820 0x4
-				0xe0002824 0x8>;
+			reg = <0x80002800 0x4
+				0x80002804 0x4
+				0x80002808 0x4
+				0x8000280c 0x4
+				0x80002810 0x4
+				0x80002814 0x4
+				0x80002818 0x4
+				0x8000281c 0x4
+				0x80002820 0x4
+				0x80002824 0x8>;
 			reg-names =
 				"load",
 				"reload",
@@ -109,24 +104,38 @@
 				"uptime_cycles";
 			status = "disabled";
 		};
-		eth0: ethernet@e0009800 {
+
+		dna0: dna@e0003800 {
+			compatible = "litex,dna0";
+			/* DNA data is 57-bits long,
+			so it requires 8 bytes.
+			In LiteX each 32-bit register holds
+			only a single byte of meaningful data,
+			hence 8 registers. */
+			reg = <0xe0003800 0x20>;
+			reg-names = "mem";
+			status = "disabled";
+		};
+
+
+		eth0: ethernet@82009800 {
 			compatible = "litex,eth0";
-			interrupt-parent = <&intc0>;
+			interrupt-parent = <&PLIC0>;
 			interrupts = <3 0>;
-			reg = <0xe0009800 0x4
-				0xe0009804 0x4
-				0xe0009808 0x4
-				0xe000980c 0x4
-				0xe0009810 0x4
-				0xe0009814 0x4
-				0xe0009818 0x4
-				0xe000981c 0x4
-				0xe0009820 0x4
-				0xe0009824 0x4
-				0xe0009828 0x4
-				0xe000982c 0x4
-				0xe0009830 0x4
-				0xe0009834 0x4
+			reg = <0x82009800 0x4
+				0x82009804 0x4
+				0x82009808 0x4
+				0x8200980c 0x4
+				0x82009810 0x4
+				0x82009814 0x4
+				0x82009818 0x4
+				0x8200981c 0x4
+				0x82009820 0x4
+				0x82009824 0x4
+				0x82009828 0x4
+				0x8200982c 0x4
+				0x82009830 0x4
+				0x82009834 0x4
 				0xb0000000 0x2000>;
 			local-mac-address = [10 e2 d5 00 00 02];
 			reg-names = "rx_slot",
@@ -146,28 +155,35 @@
 				"buffers";
 			status = "disabled";
 		};
-		dna0: dna@e0003800 {
-			compatible = "litex,dna0";
-			/* DNA data is 57-bits long,
-			so it requires 8 bytes.
-			In LiteX each 32-bit register holds
-			only a single byte of meaningful data,
-			hence 8 registers. */
-			reg = <0xe0003800 0x20>;
-			reg-names = "mem";
+		spi0: spi@82002000 {
+			compatible = "litex,spi";
+			reg = <0x82002000 0x4
+				0x82002004 0x4
+				0x82002008 0x4
+				0x8200200c 0x4
+				0x82002010 0x4
+				0x82002014 0x4>;
+			reg-names = "control",
+				"status",
+				"mosi",
+				"miso",
+				"cs",
+				"loopback";
 			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
 		};
-		i2c0: i2c@e0005000 {
+		i2c0: i2c@82005000 {
 			compatible = "litex,i2c";
-			reg = <0xe0005000 0x4 0xe0005004 0x4>;
+			reg = <0x82005000 0x4 0x82005004 0x4>;
 			reg-names = "write", "read";
 			#address-cells = <1>;
 			#size-cells = <0>;
 			status = "disabled";
 		};
-		gpio_out: gpio@e0005800 {
+				gpio_out: gpio@82005800 {
 			compatible = "litex,gpio";
-			reg = <0xe0005800 0x4>;
+			reg = <0x82005800 0x4>;
 			reg-names = "control";
 			ngpios = <4>;
 			port-is-output;
@@ -175,14 +191,14 @@
 			gpio-controller;
 			#gpio-cells = <2>;
 		};
-		gpio_in: gpio@e0006000 {
+		gpio_in: gpio@82006000 {
 			compatible = "litex,gpio";
-			reg = <0xe0006000 0x4
-				0xe0006004 0x4
-				0xe0006008 0x4
-				0xe0006010 0x4
-				0xe0006014 0x4>;
-			interrupt-parent = <&intc0>;
+			reg = <0x82006000 0x4
+				0x82006004 0x4
+				0x82006008 0x4
+				0x82006010 0x4
+				0x82006014 0x4>;
+			interrupt-parent = <&PLIC0>;
 			interrupts = <4 2>;
 			reg-names = "base",
 				"irq_mode",
@@ -194,29 +210,29 @@
 			gpio-controller;
 			#gpio-cells = <2>;
 		};
-		prbs0: prbs@e0006800 {
+		prbs0: prbs@82006800 {
 			compatible = "litex,prbs";
-			reg = <0xe0006800 0x4>;
+			reg = <0x82006800 0x4>;
 			reg-names = "status";
 			status = "disabled";
 		};
-		pwm0: pwm@e0007000 {
+		pwm0: pwm@82007000 {
 			compatible = "litex,pwm";
-			reg = <0xe0007000 0x4 0xe0007004 0x10 0xe0007014 0x10>;
+			reg = <0x82007000 0x4 0x82007004 0x10 0x82007014 0x10>;
 			reg-names = "enable", "width", "period";
 			status = "disabled";
 			#pwm-cells = <2>;
 		};
-		i2s_rx: i2s_rx@e000a800 {
+		i2s_rx: i2s_rx@8200a800 {
 			compatible = "litex,i2s";
-			reg = <0xe000a800 0x4
-				0xe000a804 0x4
-				0xe000a808 0x4
-				0xe000a80c 0x4
-				0xe000a810 0x4
-				0xe000a814 0x4
+			reg = <0x8200a800 0x4
+				0x8200a804 0x4
+				0x8200a808 0x4
+				0x8200a80c 0x4
+				0x8200a810 0x4
+				0x8200a814 0x4
 				0xb1000000 0x40000>;
-			interrupt-parent = <&intc0>;
+			interrupt-parent = <&PLIC0>;
 			interrupts = <6 2>;
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -230,16 +246,16 @@
 			fifo_depth = <256>;
 			status = "disabled";
 		};
-		i2s_tx: i2s_tx@e000b000 {
+		i2s_tx: i2s_tx@8200b000 {
 			compatible = "litex,i2s";
-			reg = <0xe000b000 0x4
-				0xe000b004 0x4
-				0xe000b008 0x4
-				0xe000b00c 0x4
-				0xe000b010 0x4
-				0xe000b014 0x4
+			reg = <0x8200b000 0x4
+				0x8200b004 0x4
+				0x8200b008 0x4
+				0x8200b00c 0x4
+				0x8200b010 0x4
+				0x8200b014 0x4
 				0xb2000000 0x40000>;
-			interrupt-parent = <&intc0>;
+			interrupt-parent = <&PLIC0>;
 			interrupts = <7 2>;
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -252,7 +268,7 @@
 				"fifo";
 			fifo_depth = <256>;
 			status = "disabled";
-		};
+		};	
 		clock-outputs {
 			#address-cells = <1>;
 			#size-cells = <0>;
