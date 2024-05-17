@@ -9,8 +9,8 @@
 #include <riscv64-litex-cva6.dtsi>
 
 / {
-	model = "LiteX VexRiscV";
-	compatible = "litex,vexriscv";
+	model = "LiteX CVA6";
+	compatible = "litex,cva6";
 	chosen {
 		zephyr,console = &uart0;
 		zephyr,shell-uart = &uart0;
@@ -19,7 +19,7 @@
 
 	ram0: memory@40000000 {
 		device_type = "memory";
-		reg = <0x40000000 0x10000000>;
+		reg = <0x40000000 0x30000>;
 	};
 };
 
