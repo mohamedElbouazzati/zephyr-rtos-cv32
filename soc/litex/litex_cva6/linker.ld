@@ -42,10 +42,7 @@ MEMORY
 	ram (rwxai) : ORIGIN = 0x80000000, LENGTH = 0x30000
 	dbg (rwxai) : ORIGIN = 0x1A110800, LENGTH = 0x1000
 
-     LINKER_DT_REGIONS()
-
-    /* Used by and documented in include/linker/intlist.ld */
-    IDT_LIST  (wx)      : ORIGIN = 0xFFFFF7FF, LENGTH = 2K
+  
 }
 
 
@@ -335,3 +332,4 @@ SECTIONS
 }
 
 
+#include <zephyr/arch/riscv/common/linker.ld>
