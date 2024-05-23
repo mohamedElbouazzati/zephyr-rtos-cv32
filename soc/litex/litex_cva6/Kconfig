@@ -13,6 +13,7 @@ config SOC_LITEX_CVA6
 	select RISCV_ISA_EXT_ZIFENCEI
 	select RISCV_HAS_PLIC
 	select 64bits
+	select RISCV_GP
 
 
 if SOC_LITEX_CVA6
