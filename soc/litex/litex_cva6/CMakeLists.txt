@@ -23,4 +23,4 @@ zephyr_sources(
 )
 zephyr_include_directories(.)
 
-set(SOC_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld CACHE INTERNAL "")
+set(SOC_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/link.ld CACHE INTERNAL "")
